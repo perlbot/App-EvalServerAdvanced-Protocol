@@ -8,10 +8,9 @@ use lib $FindBin::Bin . "/../lib";
 
 use App::EvalServerAdvanced::Protocol;
 
-
 $|++;
 
-while(1) {
+for (1..10) {
 my $message = encode_message(
     "eval",
     {sequence => 1+rand()*256, 
