@@ -1,6 +1,6 @@
 package App::EvalServerAdvanced::Protocol;
 our @VERSION = 0.100;
-# ABSTRACT - Protocol abstraction for App::EvalServerAdvanced 
+# ABSTRACT: Protocol abstraction for App::EvalServerAdvanced 
 
 use strict;
 use warnings;
