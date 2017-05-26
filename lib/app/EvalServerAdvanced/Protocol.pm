@@ -1,10 +1,9 @@
 package App::EvalServerAdvanced::Protocol;
+our @VERSION = 0.100;
+# ABSTRACT - Protocol abstraction for App::EvalServerAdvanced 
 
 use strict;
 use warnings;
-use Data::Dumper;
-use FindBin;
-use App::EvalServerAdvanced::Log;
 use Google::ProtocolBuffers::Dynamic;
 use Path::Tiny qw/path/;
 use Function::Parameters;
