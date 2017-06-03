@@ -4,6 +4,7 @@ use warnings;
 
 our $VERSION = '0.102';
 # ABSTRACT: Protocol abstraction for App::EvalServerAdvanced 
+my $protocol_version = 1;
 
 use v5.24.0;
 no warnings 'experimental';
@@ -83,8 +84,8 @@ fun encode_message($type, $obj) {
     my $message = App::EvalServerAdvanced::Protocol::Packet->encode({$type => $obj});
 
     # 8 byte header, 0x0000_0001 0x1234_5678
-    # first 4 bytes are reserved for future fuckery, last 4 are length of the message in octets
-    my $header = pack "NN", 1, length($message);
+    # first 4 bytes are the protocol version, last 4 are length of the message in octets
+    my $header = pack "NN", $protocol_version, length($message);
     return ($header . $message);
 };
 
@@ -94,7 +95,7 @@ fun decode_message($buffer) {
     my $header = substr($buffer, 0, 8); # grab the header
     my ($reserved, $length) = unpack("NN", $header);
 
-    die "Undecodable header" if ($reserved != 1);
+    die "Undecodable header" if ($reserved != $protocol_version);
     
     # Packet isn't ready yet
     return (0, undef, undef) if (length($buffer) - 8 < $length);
