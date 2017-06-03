@@ -2,7 +2,7 @@ package App::EvalServerAdvanced::Protocol;
 use strict;
 use warnings;
 
-our $VERSION = '0.102';
+our $VERSION = '0.103';
 # ABSTRACT: Protocol abstraction for App::EvalServerAdvanced 
 my $protocol_version = 1;
 
@@ -44,12 +44,12 @@ fun handle_decoding($obj) {
         }
         when("Warning") {
             if ($obj->encoding) {
-                $obj->message(encode($obj->encoding, $obj->message));
+                $obj->message(decode($obj->encoding, $obj->message));
             }
         }
         when("EvalResponse") {
             if ($obj->encoding) {
-                $obj->contents(encode($obj->encoding, $obj->contents));
+                $obj->contents(decode($obj->encoding, $obj->contents));
             }
         }
     }
