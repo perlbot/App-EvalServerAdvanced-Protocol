@@ -5,6 +5,9 @@ use warnings;
 our $VERSION = '0.102';
 # ABSTRACT: Protocol abstraction for App::EvalServerAdvanced 
 
+use v5.24.0;
+no warnings 'experimental';
+
 use Google::ProtocolBuffers::Dynamic;
 use Path::Tiny qw/path/;
 use Function::Parameters;
@@ -25,16 +28,18 @@ $gpb->load_string("protocol.proto", $proto);
 $gpb->map({ pb_prefix => "messages", prefix => "App::EvalServerAdvanced::Protocol", options => {accessor_style => 'single_accessor'} });
 
 fun handle_decoding($obj) {
-    my ($type = ref($obj)) =~ s/^App::EvalServerAdvanced::Protocol:://;
+    my $type = ref($obj);
+    $type =~ s/^App::EvalServerAdvanced::Protocol:://;
     given($type) {
         when("Eval") {
-            for my $file ($obj->files->@*) {
-                my $f_encoding = $file->encoding;
+            # I can't decide if I should decode these or not.  Keeping them as raw bytes seems safer
+            # for my $file ($obj->files->@*) {
+            #     my $f_encoding = $file->encoding;
 
-                if ($f_encoding ne "raw" && $f_encoding ne "") {
-                    $file->contents(decode($f_encoding, $file->contents));
-                }
-            }            
+            #     if ($f_encoding ne "raw" && $f_encoding ne "") {
+            #         $file->contents(decode($f_encoding, $file->contents));
+            #     }
+            # }            
         }
         when("Warning") {
             if ($obj->encoding) {
@@ -55,7 +60,7 @@ fun handle_encoding($type, $obj) {
             for my $file ($obj->{files}->@*) {
                 my $f_encoding = $file->{encoding};
 
-                if ($f_encoding ne "raw" && $f_encoding ne "") {
+                if (defined $f_encoding && $f_encoding ne "raw" && $f_encoding ne "") {
                     $file->{contents} = encode($f_encoding, $file->{contents});
                 }
             }

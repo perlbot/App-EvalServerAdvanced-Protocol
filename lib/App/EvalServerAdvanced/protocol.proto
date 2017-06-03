@@ -80,10 +80,10 @@ message SocketAction {
 message SocketActionResponse {
     message Error {
         string message = 1;
-        int64
+        int64 errno = 2;
     }
     message Handle {
-        int64 fileno;
+        int64 fileno = 1;
     }
     message Ack {}
 
@@ -97,6 +97,5 @@ message Packet {
         CancelEval cancel = 2;
         EvalResponse response = 3;
         Warning warning = 4;
-        FileHandleData filehandledata = 5;
     }
 }
