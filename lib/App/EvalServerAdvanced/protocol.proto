@@ -20,6 +20,7 @@ message Eval {
     message File {
         string filename = 1;
         string contents = 2;
+	string encoding = 3;
     }
 
     string language = 1;
@@ -28,6 +29,7 @@ message Eval {
 
     int64 sequence = 5; // used to accept multiple jobs
     repeated File files = 6;
+    string encoding = 2;
 }
 
 // Cancel an inflight eval on your session
@@ -41,12 +43,14 @@ message EvalResponse {
     int64 sequence = 1;
     string contents = 2;
     bool canceled = 3;
+    string encoding = 4;
 }
 
 message Warning {
     int64 sequence = 3;
     int64 type = 1;
     string message = 2;
+    string encoding = 4;
 }
 
 message Packet {

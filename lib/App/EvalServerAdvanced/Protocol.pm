@@ -1,9 +1,10 @@
 package App::EvalServerAdvanced::Protocol;
-our @VERSION = 0.100;
-# ABSTRACT: Protocol abstraction for App::EvalServerAdvanced 
-
 use strict;
 use warnings;
+
+our $VERSION = '0.101';
+# ABSTRACT: Protocol abstraction for App::EvalServerAdvanced 
+
 use Google::ProtocolBuffers::Dynamic;
 use Path::Tiny qw/path/;
 use Function::Parameters;
