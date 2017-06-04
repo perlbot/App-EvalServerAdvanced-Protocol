@@ -1,3 +1,6 @@
+0.104 - June 3rd 2017
+ * More encoding rework.  use ->get_contents instead of decoding ourselves.
+
 0.103 - June 3rd 2017
  * Bugfix.  encode ne decode.  Encoding isn't rot13.
 
