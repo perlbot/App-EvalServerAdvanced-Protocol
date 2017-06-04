@@ -2,7 +2,7 @@ package App::EvalServerAdvanced::Protocol;
 use strict;
 use warnings;
 
-our $VERSION = '0.103';
+our $VERSION = '0.104';
 # ABSTRACT: Protocol abstraction for App::EvalServerAdvanced 
 my $protocol_version = 1;
 
@@ -27,33 +27,6 @@ my $gpb = Google::ProtocolBuffers::Dynamic->new();
 $gpb->load_string("protocol.proto", $proto);
 
 $gpb->map({ pb_prefix => "messages", prefix => "App::EvalServerAdvanced::Protocol", options => {accessor_style => 'single_accessor'} });
-
-fun handle_decoding($obj) {
-    my $type = ref($obj);
-    $type =~ s/^App::EvalServerAdvanced::Protocol:://;
-    given($type) {
-        when("Eval") {
-            # I can't decide if I should decode these or not.  Keeping them as raw bytes seems safer
-            # for my $file ($obj->files->@*) {
-            #     my $f_encoding = $file->encoding;
-
-            #     if ($f_encoding ne "raw" && $f_encoding ne "") {
-            #         $file->contents(decode($f_encoding, $file->contents));
-            #     }
-            # }            
-        }
-        when("Warning") {
-            if ($obj->encoding) {
-                $obj->message(decode($obj->encoding, $obj->message));
-            }
-        }
-        when("EvalResponse") {
-            if ($obj->encoding) {
-                $obj->contents(decode($obj->encoding, $obj->contents));
-            }
-        }
-    }
-}
 
 fun handle_encoding($type, $obj) {
     given($type) {
@@ -108,9 +81,44 @@ fun decode_message($buffer) {
 
     die "Undecodable message" unless ($k);
     my $real_message = $message->$k;
-    handle_decoding($real_message);
 
     return (1, $real_message, $buffer);
 };
+
+package 
+    App::EvalServerAdvanced::Protocol::EvalResponse;
+use Encode qw//;
+
+method get_contents() {
+    if ($self->encoding && $self->encoding ne "raw") {
+        return Encode::decode($self->encoding, $self->contents);
+    }
+    return $self->contents;
+}
+
+package
+    App::EvalServerAdvanced::Protocol::Eval::File;
+use Encode qw//;
+
+method get_contents() {
+    if ($self->encoding && $self->encoding ne "raw") {
+        return Encode::decode($self->encoding, $self->contents);
+    }
+    return $self->contents;
+}
+
+
+    # given($type) {
+    #     when("Eval") {
+    #         # I can't decide if I should decode these or not.  Keeping them as raw bytes seems safer
+    #         # for my $file ($obj->files->@*) {
+    #         #     my $f_encoding = $file->encoding;
+
+    #         #     if ($f_encoding ne "raw" && $f_encoding ne "") {
+    #         #         $file->contents(decode($f_encoding, $file->contents));
+    #         #     }
+    #         # }            
+    #     }
+
 
 1;
